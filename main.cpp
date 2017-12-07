@@ -4,6 +4,7 @@
 #include <vector>
 #include <map>
 #include <iterator>
+#include <sstream>
 
 using namespace std;
 
@@ -13,17 +14,19 @@ class Cards
 {
 private:
 public:
-    map <string, string> cards;
-    map <string, string> :: iterator itr;
-    vector<string> test;
+    map<int,map<string, string>> cards;
+    map<string, string> cardsData;
+    map<int,map <string, string>> :: iterator itr;
+    map<string, string>::iterator itr2;
     Cards();
     void getCards();
     void computerPile();
 };
 
-Cards::Cards(){   }
+Cards::Cards(){ getCards();  }
 
 void Cards::getCards(){
+    string str, value,colour;
     ifstream f2;
     f2.open("/Users/andy/Desktop/c++/final/final/cards.txt");
     
@@ -32,81 +35,124 @@ void Cards::getCards(){
         cout << "Can't open file\n";
         exit(-1);
     }
-    string str;
+    
+    typedef std::map< std::string, std::string > inner_t;
+    typedef std::map< int, inner_t >     outer_t;
+    typedef outer_t::iterator                    outer_iter_t;
+    typedef inner_t::iterator                    inner_iter_t;
+    
+    outer_t tree;
+    inner_t f;
+    int count = 0;
     while (!f2.eof())
     {
         getline(f2, str);
+        stringstream strStream(str);
+        //strStream >> value;
+     
+        while (!strStream.eof())
+        {
+            strStream >> value >> colour;
+            cout << colour << endl;
+            //f.emplace(value, colour);
+        }
         
-        cards.insert(pair <string, string> (str,str));
+        //tree.emplace(count,f);
+        count++;
     }
-    
-    
+    for( outer_iter_t o = tree.begin(); o != tree.end(); ++o )
+        for( inner_iter_t i = o->second.begin(); i != o->second.end(); ++i )
+            //std::cout << i->first << " == " << i->second << std::endl;
     f2.close();
 }
-
-void Cards::computerPile(){
-    cout << test[0];
-    for (this->itr = this->cards.begin(); this->itr != this->cards.end(); ++this->itr)
-    {
-        cout  <<  '\t' << this->itr->first
-        <<  '\t' << this->itr->second << '\n';
-    }
-    cout << endl;
-}
-
 
 class CardPiles: public Cards
 {
 private:
     map <string, string> pdiscardPile;
-    map <string, string> pdrawPile;
-    map <string, string> pplayerPile;
-    map <string, string> pcomputerPile();
+    map<int,map <string, string>> pdrawPile;
+    map<int,map <string, string>> pplayerPile;
+    map<int,map <string, string>> pcomputerPile();
 public:
     CardPiles();
-    void discardPile();
-    void drawPile();
-    void playerPile();
-    void computerPile();
+    void addDiscardPile(string value,string type);
+    void addDrawPile(string value,string type);
+    void addPlayerPile(string value,string type);
+    void addComputerPile(string value,string type);
+    void removeDiscardPile(string key);
+    void removeDrawPile(string key);
+    void removePlayerPile(string key);
+    void removeComputerPile(string key);
+    void getDiscardPile();
+    void getDrawPile();
+    void getPlayerPile();
+    void getComputerPile();
+    void createPiles();
 };
 
 CardPiles::CardPiles(){
-    discardPile();
-    drawPile();
-    playerPile();
-    computerPile();
 }
 
-void CardPiles::discardPile(){
-    
-    //cout << "heyo";
-}
-
-void CardPiles::drawPile(){
-    
-    //cout << "meow";
-}
-
-void CardPiles::playerPile(){
-    
-}
-
-void CardPiles::computerPile(){
+void CardPiles::createPiles(){
+    int hand, count = 0;
     for (this->itr = this->cards.begin(); this->itr != this->cards.end(); ++this->itr)
     {
-        cout  <<  '\t' << this->itr->first
-        <<  '\t' << this->itr->second << '\n';
+        for (this->itr2 = this->cardsData.begin(); this->itr2 != this->cardsData.end(); ++this->itr2)
+        {
+            cout << itr2->first;
+        //if(count < PLAYER_CARD_AMNT && PLAYERS > hand){
+            //push to correct map and remove ones added from card;
+        //}
+        }
+        
+        //put one in discard
+        //rest in draw
     }
     cout << endl;
 }
+
+void CardPiles::addDiscardPile(string value,string type){
+    //cards.insert(pair <string, string> (value,type));
+}
+
+void CardPiles::addDrawPile(string value,string type){
+   // cards.insert(pair <string, string> (value,type));
+}
+
+void CardPiles::addPlayerPile(string value,string type){
+    //cards.insert(pair <string, string> (value,type));
+}
+
+void CardPiles::addComputerPile(string value,string type){
+    //cards.insert(pair <string, string> (value,type));
+}
+
+void CardPiles::removeDiscardPile(string key){
+    
+}
+
+void CardPiles::removeDrawPile(string key){
+    
+}
+
+void CardPiles::removePlayerPile(string key){
+}
+
+void CardPiles::removeComputerPile(string key){
+}
+
+void CardPiles::getDiscardPile(){}
+void CardPiles::getDrawPile(){}
+void CardPiles::getPlayerPile(){}
+void CardPiles::getComputerPile(){}
 
 
 int main()
 {
     
     Cards cards;
-    cards.getCards();
     CardPiles divyUp;
+    cards.getCards();
     
 
     return 0;
