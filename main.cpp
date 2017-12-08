@@ -70,6 +70,7 @@ private:
     vector<string> discardPileColour;
 public:
     CardPiles();
+    void createPiles();
     void addDiscardPile(string &value,string &type);
     void addDrawPile(string &value,string &type);
     void addPlayerPile(string &value,string &type);
@@ -82,7 +83,8 @@ public:
     vector<string> getDrawPile();
     vector<string> getPlayerPile();
     vector<string> getComputerPile();
-    void createPiles();
+    long  playerPileAmt();
+    long  computerPileAmt();
 };
 
 CardPiles::CardPiles(){
@@ -182,12 +184,27 @@ vector<string> CardPiles::getComputerPile(){
     return computerPileColour;
 }
 
+long CardPiles::playerPileAmt(){
+    //check if same as colour if not throw
+    return playerPileValue.size();
+}
+
+long CardPiles::computerPileAmt(){
+    //check if same as colour if not throw
+    return computerPileValue.size();
+}
+
 class Game{
+private:
+    CardPiles *cardPiles = nullptr;
+    //make cardPiles dynamic .. variable name newGame
 public:
     void playGame();
-    void isMatch();
+    bool isMatch(int &cardSelect);
     void computerTurn();
     void skip();
+    void topCard();
+    void isUno(string whichPlayer);
 };
 
 
@@ -198,14 +215,30 @@ void Game::playGame(){
     //make cardPiles dynamic .. variable name newGame
     
     int cardSelect = 0;
+    int playerChoice = 0;
     
     cout << "UNO" << endl;
     cout << "Press 1 to play" << endl;
     cout << "Press 2 for instructions" << endl;
+    cin >> playerChoice;
     //if less than 1 or greater than 2 throw
+    try{
+        if(playerChoice > 1 || playerChoice < 2){
+            throw("Incorrect value");
+        }
+    }catch(const char *e){
+        cout << e;
+    }
     
     //instructions press 1 to play
-    
+    cin >> playerChoice;
+    try{
+        if(playerChoice > 1){
+            throw("Incorrect value");
+        }
+    }catch(const char *e){
+        cout << e;
+    }
     cout << "Your hand:" << endl;
     cardPiles->getPlayerPile();
     
@@ -214,14 +247,53 @@ void Game::playGame(){
     
     cout << "Select a card or choose 8 to skip";
     //if choice less than 1 throw error
-    //does card match top discard if so remove if not throw error
-    cardPiles->removePlayerPile(cardSelect);
+    try{
+        if(playerChoice > 1){
+            throw("Incorrect value");
+        }
+    }catch(const char *e){
+        cout << e;
+    }
+    
+    if(isMatch(playerChoice)){
+        isUno("user");
+    }
     
     //if skip draw card
     
     //computer turn
     
     //delete newGame
+}
+
+bool Game::isMatch(int &cardSelect){
+    
+    //does card match top discard if so remove if not throw error
+    cardPiles->removePlayerPile(cardSelect);
+    
+    return false;
+    
+}
+
+void Game::isUno(string whichPlayer){
+    long userCards = cardPiles->playerPileAmt();
+    long compCards = cardPiles->computerPileAmt();
+    
+    //if computer or user has one card left stop the game
+    if(userCards == 1 || compCards == 1){
+        //isPlaying = false;
+    }
+    
+    //message based on who won
+    if(userCards == 1){
+        cout << "YOU WIN!!!";
+    }else{
+        cout << "YOU LOSE!!!";
+    }
+}
+
+void Game::computerTurn(){
+    //run through cards through all cards. if multiple matches put in pile select random. Delete from card pile check if uno
 }
 
 
