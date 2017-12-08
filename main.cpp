@@ -18,10 +18,9 @@ public:
     vector<string> cardsValue;
     Cards();
     void getCards();
-    void computerPile();
 };
 
-Cards::Cards(){ getCards();  }
+Cards::Cards(){}
 
 void Cards::getCards(){
     string str, value,colour;
@@ -83,14 +82,16 @@ public:
     vector<string> getDrawPile();
     vector<string> getPlayerPile();
     vector<string> getComputerPile();
+    void displayPlayerPile();
     long  playerPileAmt();
     long  computerPileAmt();
 };
 
-CardPiles::CardPiles(){
-}
+CardPiles::CardPiles(){}
 
 void CardPiles::createPiles(){
+    getCards();
+    
     int player = 1,playerCards = 1,count = 0;
     
     for (int i = 0; i < cardsValue.size(); i++ )
@@ -180,8 +181,12 @@ vector<string> CardPiles::getPlayerPile(){
     return playerPileColour;
 }
 
-vector<string> CardPiles::getComputerPile(){
-    return computerPileColour;
+void CardPiles::displayPlayerPile(){
+    //check if same as colour if not throw
+    cout << playerPileValue.size();
+    for(int i = 0; i < playerPileValue.size(); i++){
+        cout << i << ") " << playerPileValue[i] << playerPileColour[i];
+    }
 }
 
 long CardPiles::playerPileAmt(){
@@ -199,31 +204,37 @@ private:
     CardPiles *cardPiles = nullptr;
     //make cardPiles dynamic .. variable name newGame
 public:
+    Game();
     void playGame();
     bool isMatch(int &cardSelect);
     void computerTurn();
     void skip();
     void topCard();
     void isUno(string whichPlayer);
+    void displayUsersHand();
 };
 
+Game::Game(){}
 
 void Game::playGame(){
+    cardPiles = new CardPiles;
+    cardPiles->createPiles();
     //bool isPlaying = 0;
     
-    CardPiles *cardPiles = nullptr;
+    //CardPiles *cardPiles = nullptr;
     //make cardPiles dynamic .. variable name newGame
     
+    //CardPiles c;
     int cardSelect = 0;
     int playerChoice = 0;
     
-    cout << "UNO" << endl;
+    cout << "LETS PLAY UNO!!" << endl;
     cout << "Press 1 to play" << endl;
     cout << "Press 2 for instructions" << endl;
     cin >> playerChoice;
     //if less than 1 or greater than 2 throw
     try{
-        if(playerChoice > 1 || playerChoice < 2){
+        if(playerChoice < 0 || playerChoice > 2){
             throw("Incorrect value");
         }
     }catch(const char *e){
@@ -231,33 +242,54 @@ void Game::playGame(){
     }
     
     //instructions press 1 to play
+    if(playerChoice == 2){
+    cout << "You and the computer get 7 cards each. You have to match the card on top of the draw   pile by number,colour, or action/symbol."
+        <<
+        "TOP CARD: 8 RED"
+        <<
+        "You will need either an 8 card or red card to match above"
+        <<
+        "There are two action cards 'Skip', 'Draw Two'. If the player pulls a:"
+        <<
+        "'Skip'       -  current player can play again"
+        <<
+        "'Draw two'   -  next player has to draw two card"
+        <<
+        "If the player does not have a match or chooses to skip the player has to draw one card"
+        <<
+        "The player with one card left wins."
+    << endl;
+    cout << "Press 1 to play" << endl;
     cin >> playerChoice;
+    }
+    
     try{
-        if(playerChoice > 1){
+        if(playerChoice < 1){
             throw("Incorrect value");
         }
     }catch(const char *e){
         cout << e;
     }
+    
     cout << "Your hand:" << endl;
-    cardPiles->getPlayerPile();
+    cardPiles->displayPlayerPile();
     
     cout << "Top of discard pile:";
-    cardPiles->getDiscardPile();
+    //c.getDiscardPile();
     
     cout << "Select a card or choose 8 to skip";
     //if choice less than 1 throw error
     try{
-        if(playerChoice > 1){
+        if(playerChoice < 1){
             throw("Incorrect value");
         }
     }catch(const char *e){
         cout << e;
     }
     
-    if(isMatch(playerChoice)){
-        isUno("user");
-    }
+    //if(isMatch(playerChoice)){
+        //isUno("user");
+    //}
     
     //if skip draw card
     
@@ -299,11 +331,14 @@ void Game::computerTurn(){
 
 int main()
 {
+    //CardPiles divyUp;
+    //divyUp.createPiles();
     
-    Cards cards;
-    CardPiles divyUp;
-    divyUp.createPiles();
+    Game uno;
+    uno.playGame();
     
+    //CardPiles c;
+    //c.displayPlayerPile();
 
     return 0;
 }
