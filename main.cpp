@@ -8,16 +8,14 @@
 
 using namespace std;
 
-//const CARDS_IN_HAND = 7;
+const int PLAYER_CARDS_AMT = 7;
 
 class Cards
 {
 private:
 public:
-    map<int,map<string, string>> cards;
-    map<string, string> cardsData;
-    map<int,map <string, string>> :: iterator itr;
-    map<string, string>::iterator itr2;
+    vector<string> cardsColour;
+    vector<string> cardsValue;
     Cards();
     void getCards();
     void computerPile();
@@ -36,13 +34,7 @@ void Cards::getCards(){
         exit(-1);
     }
     
-    typedef std::map< std::string, std::string > inner_t;
-    typedef std::map< int, inner_t >     outer_t;
-    typedef outer_t::iterator                    outer_iter_t;
-    typedef inner_t::iterator                    inner_iter_t;
-    
-    outer_t tree;
-    inner_t f;
+
     int count = 0;
     while (!f2.eof())
     {
@@ -53,40 +45,43 @@ void Cards::getCards(){
         while (!strStream.eof())
         {
             strStream >> value >> colour;
-            cout << colour << endl;
-            //f.emplace(value, colour);
+            
+            cardsColour.push_back(colour);
+            cardsValue.push_back(value);
         }
         
-        //tree.emplace(count,f);
         count++;
     }
-    for( outer_iter_t o = tree.begin(); o != tree.end(); ++o )
-        for( inner_iter_t i = o->second.begin(); i != o->second.end(); ++i )
-            //std::cout << i->first << " == " << i->second << std::endl;
-    f2.close();
 }
 
 class CardPiles: public Cards
 {
 private:
-    map <string, string> pdiscardPile;
-    map<int,map <string, string>> pdrawPile;
-    map<int,map <string, string>> pplayerPile;
-    map<int,map <string, string>> pcomputerPile();
+    vector<string> drawPileValue;
+    vector<string> drawPileColour;
+    
+    vector<string> playerPileValue;
+    vector<string> playerPileColour;
+    
+    vector<string> computerPileValue;
+    vector<string> computerPileColour;
+    
+    vector<string> discardPileValue;
+    vector<string> discardPileColour;
 public:
     CardPiles();
-    void addDiscardPile(string value,string type);
-    void addDrawPile(string value,string type);
-    void addPlayerPile(string value,string type);
-    void addComputerPile(string value,string type);
-    void removeDiscardPile(string key);
-    void removeDrawPile(string key);
-    void removePlayerPile(string key);
-    void removeComputerPile(string key);
-    void getDiscardPile();
-    void getDrawPile();
-    void getPlayerPile();
-    void getComputerPile();
+    void addDiscardPile(string &value,string &type);
+    void addDrawPile(string &value,string &type);
+    void addPlayerPile(string &value,string &type);
+    void addComputerPile(string &value,string &type);
+    void removeDiscardPile(int &key);
+    void removeDrawPile(int &key);
+    void removePlayerPile(int &key);
+    void removeComputerPile(int &key);
+    vector<string> getDiscardPile();
+    vector<string> getDrawPile();
+    vector<string> getPlayerPile();
+    vector<string> getComputerPile();
     void createPiles();
 };
 
@@ -94,57 +89,140 @@ CardPiles::CardPiles(){
 }
 
 void CardPiles::createPiles(){
-    int hand, count = 0;
-    for (this->itr = this->cards.begin(); this->itr != this->cards.end(); ++this->itr)
+    int player = 1,playerCards = 1,count = 0;
+    
+    for (int i = 0; i < cardsValue.size(); i++ )
     {
-        for (this->itr2 = this->cardsData.begin(); this->itr2 != this->cardsData.end(); ++this->itr2)
-        {
-            cout << itr2->first;
-        //if(count < PLAYER_CARD_AMNT && PLAYERS > hand){
-            //push to correct map and remove ones added from card;
-        //}
+        if(PLAYER_CARDS_AMT >= count){
+            if(player == 1){
+                playerPileValue.push_back(cardsValue[i]);
+                playerPileColour.push_back(cardsColour[i]);
+            }else{
+                computerPileValue.push_back(cardsValue[i]);
+                computerPileColour.push_back(cardsColour[i]);
+            }
+            cardsValue.erase (cardsValue.begin()+i);
+            cardsColour.erase (cardsColour.begin()+i);
+            
+            playerCards++;
         }
         
-        //put one in discard
-        //rest in draw
+        if(playerCards == PLAYER_CARDS_AMT && player < 2){
+            player++;
+            count = 0;
+        }
+        
+        count++;
+        
+      
+        
+        //cout << i;
     }
-    cout << endl;
-}
 
-void CardPiles::addDiscardPile(string value,string type){
-    //cards.insert(pair <string, string> (value,type));
-}
-
-void CardPiles::addDrawPile(string value,string type){
-   // cards.insert(pair <string, string> (value,type));
-}
-
-void CardPiles::addPlayerPile(string value,string type){
-    //cards.insert(pair <string, string> (value,type));
-}
-
-void CardPiles::addComputerPile(string value,string type){
-    //cards.insert(pair <string, string> (value,type));
-}
-
-void CardPiles::removeDiscardPile(string key){
     
+    //drawPileValue.push_back();
+    cout << computerPileValue.size();
+    cout << playerPileValue.size();
+    //cout << cardsValue.size();
 }
 
-void CardPiles::removeDrawPile(string key){
+void CardPiles::addDiscardPile(string &value,string &colour){
+    discardPileValue.push_back(value);
+    discardPileColour.push_back(colour);
+}
+
+void CardPiles::addDrawPile(string &value,string &colour){
+    drawPileValue.push_back(value);
+    drawPileColour.push_back(colour);
+}
+
+void CardPiles::addPlayerPile(string &value,string &colour){
+    playerPileValue.push_back(value);
+    discardPileColour.push_back(colour);
+}
+
+void CardPiles::addComputerPile(string &value,string &colour){
+    computerPileValue.push_back(value);
+    computerPileColour.push_back(colour);
+}
+
+void CardPiles::removeDiscardPile(int &key){
+    discardPileValue.erase(discardPileValue.begin()+key);
+    discardPileColour.erase(discardPileColour.begin()+key);
+}
+
+void CardPiles::removeDrawPile(int &key){
+    drawPileValue.erase(drawPileValue.begin()+key);
+    drawPileColour.erase(drawPileColour.begin()+key);
+}
+
+void CardPiles::removePlayerPile(int &key){
+    playerPileValue.erase(playerPileValue.begin()+key);
+    playerPileColour.erase(playerPileColour.begin()+key);
+}
+
+void CardPiles::removeComputerPile(int &key){
+    computerPileValue.erase(playerPileValue.begin()+key);
+    computerPileColour.erase(playerPileColour.begin()+key);
+}
+
+vector<string> CardPiles::getDiscardPile(){
+    return discardPileColour;
+}
+
+vector<string> CardPiles::getDrawPile(){
+    return drawPileColour;
+}
+
+vector<string> CardPiles::getPlayerPile(){
+    return playerPileColour;
+}
+
+vector<string> CardPiles::getComputerPile(){
+    return computerPileColour;
+}
+
+class Game{
+public:
+    void playGame();
+    void isMatch();
+    void computerTurn();
+    void skip();
+};
+
+
+void Game::playGame(){
+    //bool isPlaying = 0;
     
+    CardPiles *cardPiles = nullptr;
+    //make cardPiles dynamic .. variable name newGame
+    
+    int cardSelect = 0;
+    
+    cout << "UNO" << endl;
+    cout << "Press 1 to play" << endl;
+    cout << "Press 2 for instructions" << endl;
+    //if less than 1 or greater than 2 throw
+    
+    //instructions press 1 to play
+    
+    cout << "Your hand:" << endl;
+    cardPiles->getPlayerPile();
+    
+    cout << "Top of discard pile:";
+    cardPiles->getDiscardPile();
+    
+    cout << "Select a card or choose 8 to skip";
+    //if choice less than 1 throw error
+    //does card match top discard if so remove if not throw error
+    cardPiles->removePlayerPile(cardSelect);
+    
+    //if skip draw card
+    
+    //computer turn
+    
+    //delete newGame
 }
-
-void CardPiles::removePlayerPile(string key){
-}
-
-void CardPiles::removeComputerPile(string key){
-}
-
-void CardPiles::getDiscardPile(){}
-void CardPiles::getDrawPile(){}
-void CardPiles::getPlayerPile(){}
-void CardPiles::getComputerPile(){}
 
 
 int main()
@@ -152,7 +230,7 @@ int main()
     
     Cards cards;
     CardPiles divyUp;
-    cards.getCards();
+    divyUp.createPiles();
     
 
     return 0;
