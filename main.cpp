@@ -9,6 +9,7 @@
 using namespace std;
 
 const int PLAYER_CARDS_AMT = 7;
+const int TOP_OF_DISCARD_PILE = 0;
 
 class Cards
 {
@@ -78,10 +79,10 @@ public:
     void removeDrawPile(int &key);
     void removePlayerPile(int &key);
     void removeComputerPile(int &key);
-    vector<string> getDiscardPile();
-    vector<string> getDrawPile();
-    vector<string> getPlayerPile();
-    vector<string> getComputerPile();
+    void getDiscardPile(string &value,string &colour,int &i);
+    void getPlayerPile(string &value,string &colour,int &i);
+    void getDrawPile(string &value,string &colour,int &i);
+    void getComputerPile(string &value,string &colour,int &i);
     void displayPlayerPile();
     long  playerPileAmt();
     long  computerPileAmt();
@@ -117,8 +118,10 @@ void CardPiles::createPiles(){
         
         count++;
         
-      
-        
+        discardPileValue.push_back(cardsValue[i]);
+        discardPileColour.push_back(cardsColour[i]);
+        //cardsValue.erase (cardsValue.begin()+i);
+        //cardsColour.erase (cardsColour.begin()+i);
         //cout << i;
     }
 
@@ -169,23 +172,37 @@ void CardPiles::removeComputerPile(int &key){
     computerPileColour.erase(playerPileColour.begin()+key);
 }
 
-vector<string> CardPiles::getDiscardPile(){
-    return discardPileColour;
+void CardPiles::getDiscardPile(string &value,string &colour,int &i){
+    //check if empty and if value/colour size is the same
+    
+    value = discardPileValue[i];
+    colour = discardPileColour[i];
 }
 
-vector<string> CardPiles::getDrawPile(){
-    return drawPileColour;
+void CardPiles::getDrawPile(string &value,string &colour,int &i){
+    value = drawPileValue[i];
+    colour = drawPileColour[i];
 }
 
-vector<string> CardPiles::getPlayerPile(){
-    return playerPileColour;
+void CardPiles::getPlayerPile(string &value,string &colour,int &i){
+    value = playerPileValue[i];
+    colour = playerPileColour[i];
+}
+
+void CardPiles::getComputerPile(string &value,string &colour,int &i){
+    value = computerPileValue[i];
+    colour = computerPileColour[i];
 }
 
 void CardPiles::displayPlayerPile(){
     //check if same as colour if not throw
     cout << playerPileValue.size();
     for(int i = 0; i < playerPileValue.size(); i++){
-        cout << i << ") " << playerPileValue[i] << playerPileColour[i];
+        cout << i << ") " << endl;
+        cout << "******";
+        cout << "|"  << playerPileValue[i] << playerPileColour[i] << "|" ;
+        cout << "|"  << "|" << endl;
+        cout << "*****";
     }
 }
 
@@ -201,32 +218,29 @@ long CardPiles::computerPileAmt(){
 
 class Game{
 private:
-    CardPiles *cardPiles = nullptr;
-    //make cardPiles dynamic .. variable name newGame
+    CardPiles *newGame = new CardPiles;
+    bool isPlaying = false;
+    string topColour,topValue;
+    int topIndex = 0;
 public:
     Game();
     void playGame();
-    bool isMatch(int &cardSelect);
+    void isMatch(string &value,string &colour);
     void computerTurn();
+    void playerTurn(int &cardSelect);
     void skip();
-    void topCard();
-    void isUno(string whichPlayer);
-    void displayUsersHand();
+    void draw();
+    void topCard(string &topColour,string &topValue,int &topIndex);
+    void isUno();
 };
 
 Game::Game(){}
 
 void Game::playGame(){
-    cardPiles = new CardPiles;
-    cardPiles->createPiles();
-    //bool isPlaying = 0;
+    newGame->createPiles();
     
-    //CardPiles *cardPiles = nullptr;
-    //make cardPiles dynamic .. variable name newGame
-    
-    //CardPiles c;
-    int cardSelect = 0;
     int playerChoice = 0;
+    long skipNumber = newGame->playerPileAmt() + 1;
     
     cout << "LETS PLAY UNO!!" << endl;
     cout << "Press 1 to play" << endl;
@@ -272,44 +286,55 @@ void Game::playGame(){
     }
     
     cout << "Your hand:" << endl;
-    cardPiles->displayPlayerPile();
+    newGame->displayPlayerPile();
     
     cout << "Top of discard pile:";
-    //c.getDiscardPile();
+    topCard(topColour, topValue,topIndex);
+    cout << topColour << topValue;
     
-    cout << "Select a card or choose 8 to skip";
-    //if choice less than 1 throw error
+    cout << "Select a card or choose" << skipNumber << " to skip";
+    //if choice less than 1 or more than user pile throw error
     try{
-        if(playerChoice < 1){
+        if(playerChoice < 1 || skipNumber > playerChoice){
             throw("Incorrect value");
         }
     }catch(const char *e){
         cout << e;
     }
     
-    //if(isMatch(playerChoice)){
-        //isUno("user");
-    //}
+    //select who goes first;
     
-    //if skip draw card
+    //player turn
+    playerTurn(playerChoice);
     
     //computer turn
+    computerTurn();
     
     //delete newGame
 }
 
-bool Game::isMatch(int &cardSelect){
-    
-    //does card match top discard if so remove if not throw error
-    cardPiles->removePlayerPile(cardSelect);
-    
-    return false;
-    
+void Game::topCard(string &topColour,string &topValue,int &topIndex){
+    newGame->getDiscardPile(topColour,topValue,topIndex);
 }
 
-void Game::isUno(string whichPlayer){
-    long userCards = cardPiles->playerPileAmt();
-    long compCards = cardPiles->computerPileAmt();
+void Game::isMatch(string &value, string &colour){
+    
+    //does card match top discard if so remove if not throw error
+   
+    topCard(topColour,topValue,topIndex);
+    
+    if(topColour == colour || topValue == value){
+        
+    }
+    
+    newGame->removePlayerPile(cardSelect);
+    
+    isUno();
+}
+
+void Game::isUno(){
+    long userCards = newGame->playerPileAmt();
+    long compCards = newGame->computerPileAmt();
     
     //if computer or user has one card left stop the game
     if(userCards == 1 || compCards == 1){
@@ -325,20 +350,49 @@ void Game::isUno(string whichPlayer){
 }
 
 void Game::computerTurn(){
-    //run through cards through all cards. if multiple matches put in pile select random. Delete from card pile check if uno
+    //run through all cards. if multiple matches put in pile select random. Delete from card pile check if uno
+    string computerValue,computerColour;
+    vector<int> matchPile;
+    int matchCount = 0;
+    int computerChoice = 0;
+    topCard(topColour,topValue,topIndex);
+    
+    for (int i = 0; i < newGame->computerPileAmt(); i++){
+        newGame->getComputerPile(computerValue,computerColour,i);
+        if (topValue == computerValue || topColour == computerColour) {
+            matchPile.push_back(i);
+            matchCount++;
+        }
+    }
+    
+    if(matchPile.size() == 0){
+        //skip if no matches
+        skip();
+    }else{
+        //random computer choice
+        computerChoice = rand();
+        newGame->getComputerPile(computerValue,computerColour,matchPile[computerChoice]);
+        isMatch(computerValue,computerColour);
+    }
+}
+
+void Game::playerTurn(int &playerChoice){
+    string playerValue,playerColour;
+    long skipNumber = newGame->playerPileAmt() + 1;
+    
+    //if chooses to skip
+    if(skipNumber == playerChoice){
+        skip();
+    }
+    
+    newGame->getPlayerPile(playerValue, playerColour,playerChoice);
+    isMatch(playerValue, playerColour);
 }
 
 
 int main()
 {
-    //CardPiles divyUp;
-    //divyUp.createPiles();
-    
     Game uno;
     uno.playGame();
-    
-    //CardPiles c;
-    //c.displayPlayerPile();
-
     return 0;
 }
