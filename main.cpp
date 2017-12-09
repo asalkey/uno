@@ -10,7 +10,6 @@ const int PLAYER_CARDS_AMT = 7;
 
 class Cards
 {
-private:
 public:
     vector<string> cardsColour;
     vector<string> cardsValue;
