@@ -1,13 +1,23 @@
-Game::Game(){}
+#include <iostream>
+#include <string>
+#include <fstream>
+#include <vector>
+#include <sstream>
+
+using namespace std;
+
+#include "game.h"
+
+Game::Game(){
+    newGame->createPiles();
+}
 
 Game::~Game(){
     cout << "destroying";
     delete newGame;
 }
 
-void Game::playGame(){
-    newGame->createPiles();
-    
+void Game::setupGame(){
     int playerChoice = 0;
     
     cout << "LETS PLAY UNO!!" << endl;
@@ -16,12 +26,8 @@ void Game::playGame(){
     cin >> playerChoice;
     
     //if less than 1 or greater than 2 throw
-    try{
-        if(playerChoice < 0 || playerChoice > 2){
-            throw("Incorrect value");
-        }
-    }catch(const char *e){
-        cout << e;
+    if(playerChoice < 0 || playerChoice > 2){
+        throw("Player choice out of bounds");
     }
     
     if (playerChoice == 1) {
@@ -31,7 +37,7 @@ void Game::playGame(){
         //computer turn
         computerTurn();
     }else{
-    cout << "You and the computer get 7 cards each. You have to match the card on top of the draw   pile by number,colour, or action/symbol."
+        cout << "You and the computer get 7 cards each. You have to match the card on top of the draw   pile by number,colour, or action/symbol."
         <<
         "TOP CARD: 8 RED"
         <<
@@ -46,17 +52,13 @@ void Game::playGame(){
         "If the player does not have a match or chooses to skip the player has to draw one card"
         <<
         "The player with one card left wins."
-    << endl;
-    cout << "Press 1 to play" << endl;
-    cin >> playerChoice;
+        << endl;
+        cout << "Press 1 to play" << endl;
+        cin >> playerChoice;
     }
     
-    try{
-        if(playerChoice < 1){
-            throw("Incorrect value");
-        }
-    }catch(const char *e){
-        cout << e;
+    if(playerChoice < 1){
+        throw("Player choice out of bounds");
     }
 }
 
@@ -67,14 +69,14 @@ void Game::topCard(string &topColour,string &topValue,int &topIndex){
 void Game::isMatch(string &value, string &colour,int &index){
     
     //does card match top discard if so remove if not throw error
-   
+    
     topCard(topColour,topValue,topIndex);
     
     if(topColour == colour || topValue == value){
         newGame->removePlayerPile(index);
         newGame->removeComputerPile(index);
     }else{
-        throw("not a match");
+        throw("Player choice out of bounds");
     }
     
     //check if is uno if not draw
@@ -166,12 +168,8 @@ void Game::playerTurn(int &playerChoice){
     cout << "Select a card or choose" << skipNumber << " to skip";
     
     //if choice less than 1 or more than user pile throw error
-    try{
-        if(playerChoice < 1 || skipNumber > playerChoice){
+    if(playerChoice < 1 || skipNumber > playerChoice){
             throw("Incorrect value");
-        }
-    }catch(const char *e){
-        cout << e;
     }
     
     //if chooses to skip
@@ -183,11 +181,10 @@ void Game::playerTurn(int &playerChoice){
     }
 }
 
-
-int main()
-{
-    //make dynamic
-    Game uno;
-    uno.playGame();
-    return 0;
+void Game::playGame(){
+    try{
+        setupGame();
+    }catch(const char *e){
+        cout << e << endl;
+    }
 }

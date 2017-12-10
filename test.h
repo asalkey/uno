@@ -1,14 +1,25 @@
-//
-//  test.h
-//  uno-final
-//
-//  Created by Andy on 12/8/17.
-//  Copyright © 2017 Andy. All rights reserved.
-//
+#include <iostream>
+#include <string>
+#include <fstream>
+#include <vector>
+#include <sstream>
+#include <cstdlib> 
+#include <ctime>
+using namespace std;
 
-#ifndef test_h
-#define test_h
 
-#include <stdio.h>
+#include "game.h"
 
-#endif /* test_h */
+
+const int PLAYER_CARDS_AMT = 7;
+
+class Test{
+private:
+    Cards *testCards = new Cards;
+    CardPiles *testPiles = new CardPiles;
+    Game *testGame = new Game;
+public:
+    Test();
+    ~Test();
+    void testUno();
+};

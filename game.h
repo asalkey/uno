@@ -1,3 +1,5 @@
+#include "cardpiles.h"
+
 class Game{
 private:
     CardPiles *newGame = new CardPiles;
@@ -8,6 +10,7 @@ private:
 public:
     Game();
     ~Game();
+    void setupGame();
     void playGame();
     void isMatch(string &value,string &colour,int &index);
     void computerTurn();

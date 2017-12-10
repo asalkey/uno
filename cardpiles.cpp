@@ -1,3 +1,15 @@
+#include <iostream>
+#include <string>
+#include <fstream>
+#include <vector>
+#include <sstream>
+
+using namespace std;
+
+#include "cardpiles.h"
+
+const int PLAYER_CARDS_AMT = 7;
+
 CardPiles::CardPiles(){}
 
 CardPiles::~CardPiles(){}
@@ -5,37 +17,39 @@ CardPiles::~CardPiles(){}
 void CardPiles::createPiles(){
     getCards();
     
-    int player = 1,playerCards = 1,count = 0;
+    int player = 1,playerCards = 0,count = 0;
     
-    for (int i = 0; i < cardsValue.size(); i++ )
+    for (int i = 0; i < cardsAmt(); i++ )
     {
-        if(PLAYER_CARDS_AMT >= count){
+        if(i==0){
+            //one in the discard to start the game
+            addDiscardPile(cardsValue[i],cardsColour[i]);
+            deleteCards(i);
+        }
+        
+        if(PLAYER_CARDS_AMT >= count  && player <= 2){
             if(player == 1){
+                //player gets 7 cards
                 addPlayerPile(cardsValue[i],cardsColour[i]);
             }else{
+                //computer gets 7 cards
                 addComputerPile(cardsValue[i],cardsColour[i]);
             }
             deleteCards(i);
-            
             playerCards++;
         }
         
-        if(playerCards == PLAYER_CARDS_AMT && player < 2){
+        if(playerCards == PLAYER_CARDS_AMT){
             player++;
             count = 0;
         }
         
         count++;
         
-        addDiscardPile(cardsValue[i],cardsColour[i]);
+        //the rest of cards in draw pile
+        addDrawPile(cardsValue[i],cardsColour[i]);
         deleteCards(i);
     }
-
-    
-    //drawPileValue.push_back();
-    cout << computerPileValue.size();
-    cout << playerPileValue.size();
-    //cout << cardsValue.size();
 }
 
 void CardPiles::addDiscardPile(string &value,string &colour){
@@ -50,7 +64,7 @@ void CardPiles::addDrawPile(string &value,string &colour){
 
 void CardPiles::addPlayerPile(string &value,string &colour){
     playerPileValue.push_back(value);
-    discardPileColour.push_back(colour);
+    playerPileColour.push_back(colour);
 }
 
 void CardPiles::addComputerPile(string &value,string &colour){
@@ -58,32 +72,41 @@ void CardPiles::addComputerPile(string &value,string &colour){
     computerPileColour.push_back(colour);
 }
 
-//not needed since it's a discard pile remove this
-void CardPiles::removeDiscardPile(int &index){
-    //check if exists if not throw error
-    discardPileValue.erase(discardPileValue.begin()+index);
-    discardPileColour.erase(discardPileColour.begin()+index);
-}
-
 void CardPiles::removeDrawPile(int &index){
+    //check if exists if not throw error
+    if(drawPileAmt() <= index){
+        throw("removeDrawPile: Index passed does not exist");
+    }
+    
     drawPileValue.erase(drawPileValue.begin()+index);
     drawPileColour.erase(drawPileColour.begin()+index);
 }
 
 void CardPiles::removePlayerPile(int &index){
     //check if exists if not throw error
+    if(playerPileAmt() <= index){
+        throw("removePlayerPile: Index passed does not exist");
+    }
+    
     playerPileValue.erase(playerPileValue.begin()+index);
     playerPileColour.erase(playerPileColour.begin()+index);
 }
 
 void CardPiles::removeComputerPile(int &index){
     //check if exists if not throw error
+    if(computerPileAmt() <= index){
+        throw("removeComputerPile: Index passed does not exist");
+    }
+    
     computerPileValue.erase(playerPileValue.begin()+index);
     computerPileColour.erase(playerPileColour.begin()+index);
 }
 
 void CardPiles::getDiscardPile(string &value,string &colour,int &i){
-    //check if empty and if value/colour size is the same
+    //check if exists if not throw error
+    if(discardPileAmt() <= i){
+        throw("getDiscardPile: Index passed does not exist");
+    }
     
     value = discardPileValue[i];
     colour = discardPileColour[i];
@@ -91,18 +114,30 @@ void CardPiles::getDiscardPile(string &value,string &colour,int &i){
 
 void CardPiles::getDrawPile(string &value,string &colour,int &i){
     //check if exists if not throw error
+    if(discardPileAmt() <= i){
+        throw("discardPileAmt: Index passed does not exist");
+    }
+    
     value = drawPileValue[i];
     colour = drawPileColour[i];
 }
 
 void CardPiles::getPlayerPile(string &value,string &colour,int &i){
     //check if exists if not throw error
+    if(playerPileAmt() <= i){
+        throw("playerPileAmt: Index passed does not exist");
+    }
+    
     value = playerPileValue[i];
     colour = playerPileColour[i];
 }
 
 void CardPiles::getComputerPile(string &value,string &colour,int &i){
     //check if exists if not throw error
+    if(playerPileAmt() <= i){
+        throw("computerPileAmt: Index passed does not exist");
+    }
+    
     value = computerPileValue[i];
     colour = computerPileColour[i];
 }
@@ -110,7 +145,7 @@ void CardPiles::getComputerPile(string &value,string &colour,int &i){
 void CardPiles::displayPlayerPile(){
     //check if same as colour if not throw
     cout << playerPileValue.size();
-    for(int i = 0; i < playerPileValue.size(); i++){
+    for(int i = 0; i < playerPileAmt(); i++){
         cout << i << ") " << endl;
         cout << "******";
         cout << "|"  << playerPileValue[i] << playerPileColour[i] << "|" ;
@@ -121,10 +156,36 @@ void CardPiles::displayPlayerPile(){
 
 long CardPiles::playerPileAmt(){
     //check if same as colour if not throw
+    if(playerPileValue.size() != playerPileColour.size()){
+        throw("Player value and colour not the same size");
+    }
+    
     return playerPileValue.size();
 }
 
 long CardPiles::computerPileAmt(){
     //check if same as colour if not throw
+    if(computerPileValue.size() != computerPileColour.size()){
+        throw("Computer value and colour not the same size");
+    }
+    
+    return computerPileValue.size();
+}
+
+long CardPiles::discardPileAmt(){
+    //check if same as colour if not throw
+    if(discardPileValue.size() != discardPileColour.size()){
+        throw("Discard value and colour not the same size");
+    }
+    
+    return discardPileValue.size();
+}
+
+long CardPiles::drawPileAmt(){
+    //check if same as colour if not throw
+    if(drawPileValue.size() != drawPileColour.size()){
+        throw("Draw value and colour not the same size");
+    }
+    
     return computerPileValue.size();
 }

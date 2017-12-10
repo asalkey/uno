@@ -1,3 +1,14 @@
+#include <iostream>
+#include <string>
+#include <fstream>
+#include <vector>
+#include <sstream>
+#include <algorithm>
+
+using namespace std;
+
+#include "cards.h"
+
 Cards::Cards(){}
 
 Cards::~Cards(){}
@@ -5,7 +16,7 @@ Cards::~Cards(){}
 void Cards::getCards(){
     string str, value,colour;
     ifstream f2;
-    f2.open("/Users/andy/Desktop/c++/final/final/cards.txt");
+    f2.open("/Users/andy/Desktop/c++/ffff/ffff/cards.txt");
     
     if (f2.fail())
     {
@@ -13,14 +24,13 @@ void Cards::getCards(){
         exit(-1);
     }
     
-
+    
     int count = 0;
     while (!f2.eof())
     {
         getline(f2, str);
         stringstream strStream(str);
-        //strStream >> value;
-     
+        
         while (!strStream.eof())
         {
             strStream >> value >> colour;
@@ -31,6 +41,17 @@ void Cards::getCards(){
         
         count++;
     }
+}
+
+//shuffle cards func
+
+long Cards::cardsAmt(){
+    //check if same as colour if not throw
+    if(cardsValue.size() != cardsColour.size()){
+        throw("Value and colour not the same size");
+    }
+    
+    return cardsValue.size();
 }
 
 void Cards::deleteCards(int &index){

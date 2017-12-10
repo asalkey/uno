@@ -1,3 +1,5 @@
+#include "cards.h"
+
 class CardPiles: public Cards
 {
 private:
@@ -20,7 +22,6 @@ public:
     void addDrawPile(string &value,string &type);
     void addPlayerPile(string &value,string &type);
     void addComputerPile(string &value,string &type);
-    void removeDiscardPile(int &index);
     void removeDrawPile(int &index);
     void removePlayerPile(int &index);
     void removeComputerPile(int &index);
@@ -29,6 +30,8 @@ public:
     void getDrawPile(string &value,string &colour,int &i);
     void getComputerPile(string &value,string &colour,int &i);
     void displayPlayerPile();
-    long  playerPileAmt();
-    long  computerPileAmt();
+    long playerPileAmt();
+    long computerPileAmt();
+    long drawPileAmt();
+    long discardPileAmt();
 };

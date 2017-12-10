@@ -1,6 +1,5 @@
 class Cards
 {
-private:
 public:
     vector<string> cardsColour;
     vector<string> cardsValue;
@@ -8,4 +7,5 @@ public:
     ~Cards();
     void getCards();
     void deleteCards(int &index);
+    long cardsAmt();
 };
