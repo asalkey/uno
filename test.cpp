@@ -13,7 +13,7 @@ void Test::testUno(){
     try{
         cout << "Divy up cards into piles" << endl;
         testPiles->createPiles();
-    
+        
         cout << "Player cards: 7" << endl;
         cout << testPiles->playerPileAmt() << endl;
     
@@ -25,9 +25,6 @@ void Test::testUno(){
     
         cout << "Draw cards: 77" << endl;
         cout << testPiles->drawPileAmt() << endl;
-        
-        cout << "Cards left: 0" << endl;
-        cout << testCards->cardsAmt() << endl;
     
     
         srand(time(NULL));

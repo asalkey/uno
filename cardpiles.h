@@ -29,6 +29,9 @@ public:
     void getPlayerPile(string &value,string &colour,int &i);
     void getDrawPile(string &value,string &colour,int &i);
     void getComputerPile(string &value,string &colour,int &i);
+    void createDiscardPile();
+    void createDrawPile();
+    void createPlayerPile();
     void displayPlayerPile();
     long playerPileAmt();
     long computerPileAmt();

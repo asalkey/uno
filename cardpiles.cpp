@@ -18,19 +18,10 @@ CardPiles::~CardPiles(){}
 void CardPiles::createPiles(){
     getCards();
     
-    srand(time(0)); //seed
-    //int ranNum = rand() % ca
-    
+    //divy up player piles
     int player = 1,playerCards = 0,count = 0;
-    
     for (int i = 0; i < cardsAmt(); i++ )
     {
-        if(i==0){
-            //one in the discard to start the game
-            addDiscardPile(cardsValue[i],cardsColour[i]);
-            deleteCards(i);
-        }
-        
         if(PLAYER_CARDS_AMT >= count  && player <= 2){
             if(player == 1){
                 //player gets 7 cards
@@ -49,11 +40,21 @@ void CardPiles::createPiles(){
         }
         
         count++;
-        
-        //the rest of cards in draw pile
-        addDrawPile(cardsValue[i],cardsColour[i]);
-        deleteCards(i);
     }
+    
+    //divy up discard piles
+    srand(time(0)); //seed
+    int ranNum = rand() % cardsAmt() -1; //reduce so the index does not go out of bounds
+    addDiscardPile(cardsValue[ranNum],cardsColour[ranNum]);
+    deleteCards(ranNum);
+    
+    //divy up draw pile
+    for (int i = 0; i < cardsAmt(); i++ )
+    {
+        addDrawPile(cardsValue[i],cardsColour[i]);
+    }
+       cardsValue.clear();
+    cardsColour.clear();
 }
 
 void CardPiles::addDiscardPile(string &value,string &colour){
@@ -189,5 +190,5 @@ long CardPiles::drawPileAmt(){
         throw("Draw value and colour not the same size");
     }
     
-    return computerPileValue.size();
+    return drawPileValue.size();
 }
