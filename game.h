@@ -7,6 +7,7 @@ private:
     bool isPlayer = false;
     string topColour,topValue;
     int topIndex = 0;
+    void gameLogo();
 public:
     Game();
     ~Game();

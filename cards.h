@@ -8,4 +8,5 @@ public:
     void getCards();
     void deleteCards(int &index);
     long cardsAmt();
+    void shuffleCards();
 };

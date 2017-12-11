@@ -15,7 +15,7 @@ void Test::testUno(){
         testPiles->createPiles();
     
         cout << "Player cards: 7" << endl;
-        cout <<testPiles->playerPileAmt() << endl;
+        cout << testPiles->playerPileAmt() << endl;
     
         cout << "Computer cards: 7" << endl;
         cout << testPiles->computerPileAmt() << endl;
@@ -30,15 +30,15 @@ void Test::testUno(){
         cout << testCards->cardsAmt() << endl;
     
     
-        srand(time(0));
-        int whoseTurn = rand() % 2 + 1;
-    
+        srand(time(NULL));
+        int whoseTurn = 1; //rand() % 2 + 1;
+        int w = static_cast<int>(testPiles->playerPileAmt()) + 1;
+        int ranIn = rand() % w;
+        
         if(whoseTurn == 1){
-            int index = rand() % testPiles->playerPileAmt();
             
-            cout << "Player turn - choice " << index << endl;
-            cout << testPiles->discardPileAmt() << endl;
-            testGame->playerTurn(index);
+            cout << "Player turn - choice " << ranIn << endl;
+            testGame->playerTurn(ranIn);
         }else if(whoseTurn == 2){
             cout << "Computer turn" << endl;
             

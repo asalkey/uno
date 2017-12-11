@@ -3,13 +3,18 @@
 #include <fstream>
 #include <vector>
 #include <sstream>
+#include <iomanip>
 
 using namespace std;
 
 #include "game.h"
 
 Game::Game(){
+    //Divy up cards
     newGame->createPiles();
+    
+    //Get top of discard pile
+    //topCard(topValue,topColour,topIndex);
 }
 
 Game::~Game(){
@@ -62,29 +67,31 @@ void Game::setupGame(){
     }
 }
 
-void Game::topCard(string &topColour,string &topValue,int &topIndex){
-    newGame->getDiscardPile(topColour,topValue,topIndex);
+//checked
+void Game::topCard(string &topValue,string &topColour,int &topIndex){
+    newGame->getDiscardPile(topValue,topColour,topIndex);
 }
 
+//checked
 void Game::isMatch(string &value, string &colour,int &index){
-    
     //does card match top discard if so remove if not throw error
-    
-    topCard(topColour,topValue,topIndex);
-    
     if(topColour == colour || topValue == value){
-        newGame->removePlayerPile(index);
-        newGame->removeComputerPile(index);
+        if(isPlayer){
+            newGame->removePlayerPile(index);
+        }else{
+            newGame->removeComputerPile(index);
+        }
     }else{
-        throw("Player choice out of bounds");
+        throw("Player choice does not match");
     }
     
     //check if is uno if not draw
-    if(isUno()){
+    if(!isUno()){
         draw();
     }
 }
 
+//checked
 bool Game::isUno(){
     long userCards = newGame->playerPileAmt();
     long compCards = newGame->computerPileAmt();
@@ -97,13 +104,14 @@ bool Game::isUno(){
     //message based on who won
     if(userCards == 1){
         cout << "YOU WIN!!!";
-    }else{
+    }else if(compCards == 1){
         cout << "YOU LOSE!!!";
     }
     
-    return isPlaying;
+    return (isPlaying) ? false : true;
 }
 
+//checked
 void Game::draw(){
     string drawValue,drawColour;
     int index = 0;
@@ -112,7 +120,6 @@ void Game::draw(){
     newGame->getDrawPile(drawValue,drawColour,index);
     
     if(isPlayer){
-        //add it to player pile
         newGame->addPlayerPile(drawValue,drawColour);
     }else{
         //add it to computer pile
@@ -131,7 +138,6 @@ void Game::computerTurn(){
     vector<int> matchPile;
     int matchCount = 0;
     int computerChoice = 0;
-    topCard(topColour,topValue,topIndex);
     
     for (int i = 0; i < newGame->computerPileAmt(); i++){
         newGame->getComputerPile(computerValue,computerColour,i);
@@ -152,6 +158,7 @@ void Game::computerTurn(){
     }
 }
 
+//checked
 void Game::playerTurn(int &playerChoice){
     isPlayer = true;
     
@@ -161,24 +168,36 @@ void Game::playerTurn(int &playerChoice){
     cout << "Your hand:" << endl;
     newGame->displayPlayerPile();
     
-    cout << "Top of discard pile:";
-    topCard(topColour, topValue,topIndex);
-    cout << topColour << topValue;
+    cout << "\n\n TOP OF DISCARD PILE:" << endl;
+    cout << setw(13) << setfill('*') << "\n";
+    cout << topValue << " " << topColour << endl;
+    cout << setw(13) << setfill('*') << "\n";
     
-    cout << "Select a card or choose" << skipNumber << " to skip";
+    cout << "\n\n Select a card or choose " << skipNumber << " to skip" << endl;
+    cin >> playerChoice;
     
     //if choice less than 1 or more than user pile throw error
-    if(playerChoice < 1 || skipNumber > playerChoice){
+    if(playerChoice < 1 || playerChoice > skipNumber ){
             throw("Incorrect value");
     }
     
-    //if chooses to skip
-    if(skipNumber == playerChoice){
+    playerChoice = playerChoice - 1; //remove one to match index values in vector
+    
+    //if chooses to skip -- subtracting 1 to match index values
+    if((skipNumber - 1) == playerChoice){
         draw();
     }else{
         newGame->getPlayerPile(playerValue, playerColour,playerChoice);
         isMatch(playerValue, playerColour,playerChoice);
     }
+}
+
+void Game::gameLogo(){
+    cout << "#" << setw(4) << "#" << setw(4) <<  right << "#" << setw(3) << right << "#####" << setw(7) << right << "#####" << '\n';
+    cout << "#" << setw(4) << "#" << setw(4) << right << "#" << setw(5) << right << "#" << setw(3) << right << "#" << setw(4) << right << "#" <<'\n';
+    cout << "#" << setw(4) << "#" << setw(4) << right << "#" << setw(5) << right << "#" << setw(3) << right << "#" << setw(4) << right << "#" <<'\n';
+    cout << setw(8) << left << "#####" << setw(1) << right << "#" << setw(5) << right << "#" << setw(7) << right << "#####" << '\n';
+    cout << endl;
 }
 
 void Game::playGame(){

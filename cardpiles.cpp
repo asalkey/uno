@@ -3,6 +3,7 @@
 #include <fstream>
 #include <vector>
 #include <sstream>
+#include <iomanip>
 
 using namespace std;
 
@@ -16,6 +17,9 @@ CardPiles::~CardPiles(){}
 
 void CardPiles::createPiles(){
     getCards();
+    
+    srand(time(0)); //seed
+    //int ranNum = rand() % ca
     
     int player = 1,playerCards = 0,count = 0;
     
@@ -115,7 +119,7 @@ void CardPiles::getDiscardPile(string &value,string &colour,int &i){
 void CardPiles::getDrawPile(string &value,string &colour,int &i){
     //check if exists if not throw error
     if(discardPileAmt() <= i){
-        throw("discardPileAmt: Index passed does not exist");
+        throw("getDrawPile: Index passed does not exist");
     }
     
     value = drawPileValue[i];
@@ -125,7 +129,7 @@ void CardPiles::getDrawPile(string &value,string &colour,int &i){
 void CardPiles::getPlayerPile(string &value,string &colour,int &i){
     //check if exists if not throw error
     if(playerPileAmt() <= i){
-        throw("playerPileAmt: Index passed does not exist");
+        throw("getPlayerPile: Index passed does not exist");
     }
     
     value = playerPileValue[i];
@@ -135,7 +139,7 @@ void CardPiles::getPlayerPile(string &value,string &colour,int &i){
 void CardPiles::getComputerPile(string &value,string &colour,int &i){
     //check if exists if not throw error
     if(playerPileAmt() <= i){
-        throw("computerPileAmt: Index passed does not exist");
+        throw("getComputerPile: Index passed does not exist");
     }
     
     value = computerPileValue[i];
@@ -144,13 +148,11 @@ void CardPiles::getComputerPile(string &value,string &colour,int &i){
 
 void CardPiles::displayPlayerPile(){
     //check if same as colour if not throw
-    cout << playerPileValue.size();
     for(int i = 0; i < playerPileAmt(); i++){
-        cout << i << ") " << endl;
-        cout << "******";
-        cout << "|"  << playerPileValue[i] << playerPileColour[i] << "|" ;
-        cout << "|"  << "|" << endl;
-        cout << "*****";
+        cout << "\n CARD #: " << i+1 << endl;
+        cout << setw(13) << setfill('*') << "\n";
+        cout << " "  << playerPileValue[i] << " " << playerPileColour[i] << endl;
+        cout << setw(13) << setfill('*') << "\n";
     }
 }
 

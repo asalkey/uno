@@ -41,9 +41,44 @@ void Cards::getCards(){
         
         count++;
     }
+    
+    shuffleCards();
 }
 
 //shuffle cards func
+void Cards::shuffleCards(){
+    srand(time(0)); //seed
+    int *indexArray;
+    int cardIndex;
+    long limit;
+    indexArray = new int[cardsAmt()];
+    limit = cardsAmt() - 1; //reduce so the index does not go out of bounds
+    
+    //check that we have space for array
+    if (!indexArray){
+        exit(-1);
+    }
+    
+    //Get a random array of indices
+    for(int i = 0; i < cardsAmt(); i++){
+        indexArray[i] = rand() % limit;
+    }
+    
+    for(int i = 0; i < cardsAmt(); i++){
+        cardIndex = indexArray[i];
+        
+        //put the value in the back of vector
+        cardsColour.push_back(cardsColour[cardIndex]);
+        cardsValue.push_back(cardsValue[cardIndex]);
+        
+        //delete those values so no duplicates
+        cardsColour.erase(cardsColour.begin() + cardIndex);
+        cardsValue.erase(cardsValue.begin() + cardIndex);
+    }
+    
+    //delete array
+    delete [] indexArray;
+}
 
 long Cards::cardsAmt(){
     //check if same as colour if not throw
